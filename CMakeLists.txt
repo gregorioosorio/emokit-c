@@ -33,6 +33,7 @@ ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(examples/emokitd)
 ADD_SUBDIRECTORY(examples/contact)
 ADD_SUBDIRECTORY(examples/emokit_osc)
+ADD_SUBDIRECTORY(examples/values)
 
 ##########################################
 ##       PKGCONFIG file                ###
