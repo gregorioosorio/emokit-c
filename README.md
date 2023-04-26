@@ -100,3 +100,11 @@ You must use a HIDAPI library.
  O2 Reading: 337 Quality: 0  
  O1 Reading: -198 Quality: 0  
  AF3 Reading: 146 Quality: 0  
+
+ # Ubuntu packages
+
+```bash
+sudo apt install libmcrypt-dev 
+sudo apt install hidapi
+sudo apt install libhidapi-dev 
+```
