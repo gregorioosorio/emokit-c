@@ -7,6 +7,8 @@ Get real-time contact quality readings
 #include <stdio.h>
 #include <string.h>
 #include <signal.h>
+#include <time.h>
+#include <sys/time.h>
 #include "emokit/emokit.h"
 
 int quit;
@@ -50,14 +52,22 @@ int main(int argc, char **argv)
 		emokit_delete(d);
 		return 1;
 	}
-
+	char timestamp[18];
+	// print CSV header
+	fprintf(stdout, "timestamp,F3_V,F3_Q,FC6_V,FC6_Q,P7_V,P7_Q,T8_V,T8_Q,F7_V,F7_Q,F8_V,F8_Q,T7_V,T7_Q,P8_V,P8_Q,AF4_V,AF4_Q,F4_V,F4_Q,AF3_V,AF3_Q,O2_V,O2_Q,O1_V,O1_Q,FC5_V,FC5_Q\n");
 	struct emokit_frame c;
 	while (!quit) {
 		int err = emokit_read_data_timeout(d, 1000);
 		if(err > 0) {
-			c = emokit_get_next_frame(d);			
-			fprintf(stdout,"F3 Reading: %4d, Quality: %4d, FC6 Reading: %4d, Quality: %4d, P7 Reading: %4d, Quality: %4d, T8 Reading: %4d, Quality: %4d, F7  Reading: %4d, Quality: %4d, F8  Reading: %4d, Quality: %4d, T7  Reading: %4d, Quality: %4d, P8  Reading: %4d, Quality: %4d, AF4 Reading: %4d, Quality: %4d, F4  Reading: %4d, Quality: %4d, AF3 Reading: %4d, Quality: %4d, O2  Reading: %4d, Quality: %4d, O1  Reading: %4d, Quality: %4d, FC5 Reading: %4d, Quality: %4d\n",
-			c.cq.F3, c.F3, c.cq.FC6, c.FC6, c.cq.P7, c.P7, c.cq.T8, c.T8, c.cq.F7, c.F7, c.cq.F8, c.F8, c.cq.T7, c.T7, c.cq.P8, c.P8, c.cq.AF4, c.AF4, c.cq.F4, c.F4, c.cq.AF3, c.AF3, c.cq.O2, c.O2, c.cq.O1, c.O1, c.cq.FC5, c.FC5);
+			c = emokit_get_next_frame(d);
+			struct timeval tv;
+			gettimeofday(&tv, NULL);
+			time_t t = tv.tv_sec;
+			struct tm *tm = localtime(&t);
+			strftime(timestamp, sizeof(timestamp), "%Y%m%d%H%M%S", tm);
+			sprintf(timestamp + 15, "%03d", (int) tv.tv_usec / 1000);
+			fprintf(stdout,"%s,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d\n",
+			timestamp,c.cq.F3, c.F3, c.cq.FC6, c.FC6, c.cq.P7, c.P7, c.cq.T8, c.T8, c.cq.F7, c.F7, c.cq.F8, c.F8, c.cq.T7, c.T7, c.cq.P8, c.P8, c.cq.AF4, c.AF4, c.cq.F4, c.F4, c.cq.AF3, c.AF3, c.cq.O2, c.O2, c.cq.O1, c.O1, c.cq.FC5, c.FC5);
 			fflush(stdout);
 		} else if(err == 0) {
 			fprintf(stderr, "Headset Timeout...\n");
