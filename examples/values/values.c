@@ -52,7 +52,8 @@ int main(int argc, char **argv)
 		emokit_delete(d);
 		return 1;
 	}
-	char timestamp[18];
+	char timestamp[14 + 1];
+	char milliseconds[6 + 1];
 	// print CSV header
 	fprintf(stdout, "timestamp,F3_V,F3_Q,FC6_V,FC6_Q,P7_V,P7_Q,T8_V,T8_Q,F7_V,F7_Q,F8_V,F8_Q,T7_V,T7_Q,P8_V,P8_Q,AF4_V,AF4_Q,F4_V,F4_Q,AF3_V,AF3_Q,O2_V,O2_Q,O1_V,O1_Q,FC5_V,FC5_Q\n");
 	struct emokit_frame c;
@@ -65,9 +66,9 @@ int main(int argc, char **argv)
 			time_t t = tv.tv_sec;
 			struct tm *tm = localtime(&t);
 			strftime(timestamp, sizeof(timestamp), "%Y%m%d%H%M%S", tm);
-			sprintf(timestamp + 15, "%03d", (int) tv.tv_usec / 1000);
-			fprintf(stdout,"%s,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d\n",
-			timestamp,c.cq.F3, c.F3, c.cq.FC6, c.FC6, c.cq.P7, c.P7, c.cq.T8, c.T8, c.cq.F7, c.F7, c.cq.F8, c.F8, c.cq.T7, c.T7, c.cq.P8, c.P8, c.cq.AF4, c.AF4, c.cq.F4, c.F4, c.cq.AF3, c.AF3, c.cq.O2, c.O2, c.cq.O1, c.O1, c.cq.FC5, c.FC5);
+			sprintf(milliseconds, "%06d", (int) tv.tv_usec);
+			fprintf(stdout,"%s%s,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d,%4d\n",
+			timestamp,milliseconds,c.cq.F3, c.F3, c.cq.FC6, c.FC6, c.cq.P7, c.P7, c.cq.T8, c.T8, c.cq.F7, c.F7, c.cq.F8, c.F8, c.cq.T7, c.T7, c.cq.P8, c.P8, c.cq.AF4, c.AF4, c.cq.F4, c.F4, c.cq.AF3, c.AF3, c.cq.O2, c.O2, c.cq.O1, c.O1, c.cq.FC5, c.FC5);
 			fflush(stdout);
 		} else if(err == 0) {
 			fprintf(stderr, "Headset Timeout...\n");
